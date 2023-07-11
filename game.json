@@ -1,0 +1,165 @@
+{
+	"players": [
+		{
+			"id": 0,
+			"name": "Tanner",
+			"score": 13,
+			"img": "/img/tanner_framed.png",
+			"hidden": false,
+			"onces": 524
+		},
+		{
+			"id": 1,
+			"name": "Xaria",
+			"score": 5,
+			"img": "/img/xaria_framed.png",
+			"hidden": false,
+			"onces": 229
+		},
+		{
+			"id": 2,
+			"name": "Alex",
+			"score": 6,
+			"img": "/img/alex_framed.png",
+			"hidden": false,
+			"onces": 3
+		},
+		{
+			"id": 3,
+			"name": "Clara",
+			"score": 6,
+			"img": "/img/clara_framed.png",
+			"hidden": false,
+			"onces": 54
+		},
+		{
+			"id": 4,
+			"name": "Daniel",
+			"score": 8,
+			"img": "/img/daniel_framed.png",
+			"hidden": false,
+			"onces": 154
+		},
+		{
+			"id": 5,
+			"name": "Emma",
+			"score": 7,
+			"img": "/img/emma_framed.png",
+			"hidden": false,
+			"onces": 29
+		},
+		{
+			"id": 6,
+			"name": "Kolin",
+			"score": 9,
+			"img": "/img/kolin_framed.png",
+			"hidden": false,
+			"onces": 93
+		},
+		{
+			"id": 7,
+			"name": "Lauren",
+			"score": 8,
+			"img": "/img/lauren_framed.png",
+			"hidden": false,
+			"onces": 60
+		},
+		{
+			"id": 8,
+			"name": "Matt",
+			"score": 12,
+			"img": "/img/matt_framed.png",
+			"hidden": false,
+			"onces": 123
+		},
+		{
+			"id": 9,
+			"name": "Meghan",
+			"score": 7,
+			"img": "/img/megan_framed.png",
+			"hidden": false,
+			"onces": 250
+		},
+		{
+			"id": 10,
+			"name": "Annina",
+			"score": 4,
+			"img": "/img/nina_framed.png",
+			"hidden": false,
+			"onces": 5
+		},
+		{
+			"id": 11,
+			"name": "Rachel",
+			"score": 9,
+			"img": "/img/rachel_framed.png",
+			"hidden": false,
+			"onces": 3
+		},
+		{
+			"id": 12,
+			"name": "Sarah",
+			"score": 4,
+			"img": "/img/sarah_framed.png",
+			"hidden": false,
+			"onces": 279
+		},
+		{
+			"id": 13,
+			"name": "Mitchell",
+			"score": 19,
+			"img": "/img/mitchell_framed.png",
+			"hidden": false,
+			"onces": 516
+		},
+		{
+			"id": 14,
+			"name": "Emery",
+			"score": 4,
+			"img": "/img/emery_framed.png",
+			"hidden": false,
+			"onces": 166
+		},
+		{
+			"id": 15,
+			"name": "Ronald",
+			"score": 6,
+			"img": "/img/ronald_framed.png",
+			"hidden": false,
+			"onces": 160
+		},
+		{
+			"id": 16,
+			"name": "Wes",
+			"score": 11,
+			"img": "/img/wes_framed.png",
+			"hidden": false,
+			"onces": 516
+		},
+		{
+			"id": 17,
+			"name": "Daniel J.",
+			"score": 4,
+			"img": "/img/derp_framed.png",
+			"hidden": false,
+			"onces": 166
+		},
+		{
+			"id": 18,
+			"name": "Addy",
+			"score": 6,
+			"img": "/img/derp_framed.png",
+			"hidden": false,
+			"onces": 180
+		},
+		{
+			"id": 19,
+			"name": "Adam",
+			"score": 8,
+			"img": "/img/derp_framed.png",
+			"hidden": false,
+			"onces": 127
+		}
+	],
+	"msgs": []
+}

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: "Veteran Typewriter";
+        src: url("/font/veteran_typewriter.ttf");
+      }
+
+      body {
+        font-family: "Veteran Typewriter";
+      }
+      .card {
+        position: absolute;
+        transition: transform 500ms;
+        transition-timing-function: ease;
+        text-align: center;
+      }
+      .player_name {
+        font-size: 36px;
+        color: #982627;
+      }
+
+      .player_img {
+      }
+
+      #timer {
+        font-size: 400px;
+      }
+
+      .score {
+        background-image: url("/img/tm_seal.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        font-size: 36px;
+        text-align: center;
+        color: white;
+        width: 95%;
+        padding-left: 5%;
+        height: 2em;
+        line-height: 1.8em;
+      }
+    </style>
+    <script type="text/javascript">
+      function easeOutQuint(x) {
+        return 1 - Math.pow(1 - x, 5);
+      }
+      function $(query) {
+        return document.querySelector(query);
+      }
+
+      class LeaderBoard {
+        constructor() {
+          this.players = new Map();
+        }
+
+        renderPlayer(player) {
+          const card = document.createElement("div");
+          card.setAttribute("id", `p${player.id}`);
+          card.setAttribute("class", "card");
+
+          const name = document.createElement("div");
+          name.classList.add("player_name");
+          card.appendChild(name);
+
+          const img = document.createElement("img");
+          img.classList.add("player_img");
+          img.src = player.img;
+          card.appendChild(img);
+
+          const score = document.createElement("div");
+          score.classList.add("score");
+          card.appendChild(score);
+          return card;
+        }
+
+        hide() {
+          const board = document.querySelector("#leaderboard");
+          board.style.display = "none";
+        }
+
+        show() {
+          const board = document.querySelector("#leaderboard");
+          board.style.display = "block";
+        }
+
+        async update(players) {
+          const newPlayers = new Map();
+          for (const player of players) {
+            if (player.hidden) continue;
+            newPlayers.set(player.id, player);
+          }
+
+          const update = [],
+            create = [],
+            remove = [];
+          for (const [id, player] of newPlayers.entries()) {
+            if (!this.players.has(id)) {
+              create.push(player);
+            }
+            update.push(player);
+          }
+          for (const [id, player] of this.players.entries()) {
+            if (!newPlayers.has(id)) {
+              remove.push(player);
+            }
+          }
+          this.players = newPlayers;
+          const sortedPlayers = [...newPlayers.values()].sort((a, b) => {
+            return b.score - a.score;
+          });
+
+          const width = 200 + 10; // pic size + margin
+          let x = window.innerWidth - width;
+          let y = 50;
+          for (let i = 0; i < sortedPlayers.length; i++) {
+            sortedPlayers[i].x = x;
+            sortedPlayers[i].y = y;
+            sortedPlayers[i].place = i + 1;
+
+            x -= width;
+            if (x < 0) {
+              x = window.innerWidth - width;
+              y += 400;
+            }
+          }
+
+          const board = document.getElementById("leaderboard");
+          for (const player of create) {
+            const card = this.renderPlayer(player);
+            board.appendChild(card);
+          }
+          for (const player of update) {
+            const card = document.querySelector(`#p${player.id}`);
+            // assume img can't change
+            const name = card.querySelector(".player_name");
+            name.innerText = `${player.place}) ${player.name}`;
+
+            const score = card.querySelector(".score");
+            score.innerText = `${player.score}`;
+
+            card.style.transform = `translate(${player.x}px, ${player.y}px)`;
+          }
+          for (const player of remove) {
+            const card = document.getElementById(`p${player.id}`);
+            card.remove();
+          }
+        }
+      }
+
+      class Timer {
+        constructor() {
+          this.startTime = null;
+          this.durationMs = 100 * 1000;
+        }
+
+        hide() {
+          const timer = document.querySelector("#timer");
+          timer.style.display = "none";
+        }
+
+        show() {
+          const timer = document.querySelector("#timer");
+          timer.style.display = "inline";
+        }
+
+        start(durationSec) {
+          this.durationMs = durationSec * 1000;
+          this.startTime = new Date();
+        }
+
+        stop() {
+          this.startTime = null;
+        }
+
+        render() {
+          if (this.startTime === null) {
+            document.querySelector("#timer").innerHTML = "Timer";
+          } else {
+            const elapsed = new Date() - this.startTime;
+            const remaining = Math.ceil(
+              Math.max(this.durationMs - elapsed, 0) / 1000
+            );
+            const min = Math.floor(remaining / 60);
+            const sec = Math.floor(remaining % 60);
+            const timeStr = `${min}:${sec.toString().padStart(2, "0")}`;
+            document.querySelector("#timer").innerHTML = timeStr;
+          }
+        }
+      }
+
+      class BoxPlot {
+        create() {
+          this.root = document.querySelector("#dist_task");
+          this.width = 1500;
+          this.height = 300;
+
+          const text = document.createElement("div");
+          text.classList.add("text");
+
+          const graph = document.createElement("canvas");
+          graph.width = this.width;
+          graph.height = this.height;
+
+          this.root.appendChild(text);
+          this.root.appendChild(graph);
+        }
+
+        hide() {
+          this.root.style.display = "none";
+        }
+
+        show() {
+          this.root.style.display = "block";
+        }
+
+        renderLabel(ctx, label, x, above) {
+          const boxHeight = 100; // TODO
+          const txtSize = ctx.measureText(label);
+          const txtHeight = txtSize.actualBoundingBoxAscent + txtSize.actualBoundingBoxDescent;
+          const y = this.height/2 + (above ? -1 : 1) * (boxHeight/2 + txtHeight);
+          ctx.fillText(label, x - txtSize.width/2, y);
+        }
+
+        render(p0, p25, p50, p75, p100, data) {
+          const boxHeight = 100;
+          const whiskerHeight = 20;
+          const max = p100 + 1; // onces
+          const toPxls = x => x / max * this.width;
+
+          const graph = this.root.querySelector("canvas");
+          const ctx = graph.getContext("2d");
+          ctx.font = "30px Veteran Typewriter";
+          ctx.clearRect(0, 0, this.width, this.height);
+
+          // min
+          ctx.beginPath();
+          ctx.moveTo(toPxls(p25), this.height/2);
+          ctx.lineTo(toPxls(p0), this.height/2);
+          ctx.lineTo(toPxls(p0), this.height/2 - whiskerHeight);
+          ctx.lineTo(toPxls(p0), this.height/2 + whiskerHeight);
+
+          // this.renderLabel(ctx, names[0], toPxls(p0), true);
+
+          // draw interquartile range
+          ctx.rect(toPxls(p25), (this.height-boxHeight)/2, toPxls(p75-p25), boxHeight);
+          /*
+          this.renderLabel(ctx, names[1], toPxls(p25), false);
+          this.renderLabel(ctx, names[3], toPxls(p75), false);
+          */
+
+          // median
+          ctx.moveTo(toPxls(p50), (this.height-boxHeight)/2);
+          ctx.lineTo(toPxls(p50), (this.height+boxHeight)/2);
+          // this.renderLabel(ctx, names[2], toPxls(p50), true);
+
+
+          // max
+          ctx.moveTo(toPxls(p75), this.height/2);
+          ctx.lineTo(toPxls(p100), this.height/2);
+          ctx.lineTo(toPxls(p100), this.height/2 - whiskerHeight);
+          ctx.lineTo(toPxls(p100), this.height/2 + whiskerHeight);
+          // this.renderLabel(ctx, names[4], toPxls(p100), true);
+
+          ctx.stroke();
+
+          // draw data
+          ctx.beginPath();
+          for (const datum of data) {
+            ctx.arc(toPxls(datum), this.height/2, 5, 0, 2 * Math.PI)
+          }
+          ctx.fill();
+          /*
+          ctx.beginPath();
+          for (let x = 0; x <= this.width; x++) {
+            const y = normalDist(x - this.width/2, sigma) * 200;
+            ctx.lineTo(x, this.height - y);
+          }
+          ctx.stroke();
+          */
+        }
+
+        percentiles(data) {
+          const n25 = Math.floor(data.length * 0.25 + 0.5);
+          const n50 = data.length / 2;
+          let p50 = 0;
+          if (data.length % 2 == 0) {
+            p50 = data[Math.floor(n50)];
+          } else {
+            p50 = (data[Math.floor(n50)] + data[Math.ceil(n50)])/2;
+          }
+          const n75 = Math.floor(data.length * 0.75 + 0.5);
+
+          return [
+            data[0],
+            data[n25],
+            p50,
+            data[n75],
+            data[data.length-1],
+          ];
+        }
+
+        update(players) {
+          const text = this.root.querySelector(".text");
+
+          const playersSorted = [];
+          for (const p of players) {
+            playersSorted.push({ ...p });
+          }
+          playersSorted.sort(
+            (a, b) =>
+              a.onces - b.onces
+          );
+          let result = "";
+
+
+          const data = playersSorted.map(p => p.onces);
+          const percentiles = this.percentiles(data);
+          const p50 = percentiles[2];
+          const places = [new Set(), new Set(), new Set(), new Set(), new Set()];
+          console.log(players);
+          console.log(p50);
+          let scores = players
+            .map(x => {
+              return {
+                score: Math.abs(x.onces - p50),
+                id: x.id,
+              };
+            })
+            .sort((a, b) => a.score - b.score);
+
+          // this is a real mess but I've got only a couple hours left lol
+          // find first place
+          const winning_score = scores[0].score;
+          for (let i = 0; i < scores.length; i++) {
+            if (scores[i].score === winning_score) {
+              places[0].add(scores[i].id);
+              continue;
+            } 
+            break
+          }
+
+          // find places 2 through 5
+          let place_idx = 1;
+          let last_score = scores[scores.length-1].score;
+          for (let i = scores.length-1; i > 0 && place_idx < 5;) {
+            if (scores[i].score === last_score) {
+              places[place_idx].add(scores[i].id);
+              i--;
+              continue;
+            } 
+            place_idx++;
+            last_score = scores[i].score;
+          }
+          console.log(places);
+          for (const p of playersSorted) {
+            result += `${p.name}: ${p.onces}`;
+            for (let place = 0; place < places.length; place++) {
+              if (places[place].has(p.id)) {
+                result += ` (${place+1})`;
+                break;
+              }
+            }
+            result += "\n";
+          }
+          text.innerText = result;
+
+
+
+
+          console.log(scores);
+
+          console.log(percentiles);
+          this.render(...percentiles, data);
+        }
+      }
+
+      class IngredientsList {
+        hide() {
+          $("#ingredients").style.display = "none";
+        }
+
+        show() {
+          $("#ingredients").style.display = "block";
+        }
+      }
+
+      class MCATQuestion {
+        hide() {
+          $("#mcat").style.display = "none";
+        }
+
+        show() {
+          $("#mcat").style.display = "inline";
+        }
+      }
+
+      const timer = new Timer();
+      const leaderBoard = new LeaderBoard();
+      const boxPlot = new BoxPlot();
+      const ingredientsList = new IngredientsList();
+      const mcatQuestion = new MCATQuestion();
+
+      const components = [
+        timer, leaderBoard, boxPlot, ingredientsList, mcatQuestion
+      ];
+
+      function showComponent(showMe) {
+        for (const c of components) {
+          if (c == showMe) c.show();
+          else c.hide();
+        }
+      }
+      
+      function processMsg(msg) {
+        console.log(msg);
+        switch (msg.name) {
+          case "starttimer":
+            timer.start(msg.durationSec);
+            timer.render();
+            showComponent(timer);
+            break;
+          case "showleaderboard":
+            showComponent(leaderBoard);
+            break;
+          case "showboxplot":
+            showComponent(boxPlot);
+            break;
+          case "showingredients":
+            showComponent(ingredientsList);
+            break;
+          case "showmcat":
+            showComponent(mcatQuestion);
+            timer.start(60);
+            timer.render();
+            timer.show();
+            break;
+          default:
+            console.error(`unknown message: ${msg}`);
+        }
+      }
+
+      async function update() {
+        const response = await fetch("/api/getgame");
+        const game = await response.json();
+        await leaderBoard.update(game.players);
+        for (const msg of game.msgs) {
+          const json = JSON.parse(msg);
+          processMsg(json);
+        }
+        boxPlot.update(game.players.filter(p => !p.hidden));
+      }
+
+      window.onload = async function () {
+        boxPlot.create();
+        setInterval(update, 500);
+
+        setInterval(timer.render.bind(timer), 500);
+      };
+    </script>
+  </head>
+  <body>
+    <div id="leaderboard"></div>
+    <div style="display: none" id="dist_task"></div>
+    <div style="display: none" id="mcat">
+      <img src="/img/mcat1.png">
+    </div>
+    <div style="display: none" id="timer"></div>
+    <div style="display: none" id="ingredients">
+      <h1>Alcohol</h1>
+      <ul>
+        <li>Whiskey</li>
+        <li>Vodka</li>
+      </ul>
+      <h1>Fruit</h1>
+      <ul>
+        <li>Oranges</li>
+        <li>Lemon</li>
+      </ul>
+      <h1>Liquors</h1>
+      <ul>
+        <li>coffee</li>
+      </ul>
+    </div>
+  </body>
+</html>

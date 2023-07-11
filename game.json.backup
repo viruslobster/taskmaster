@@ -1,0 +1,124 @@
+{
+	"players": [
+		{
+			"id": 0,
+			"name": "Tanner",
+			"score": 0,
+			"img": "/img/tanner_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 1,
+			"name": "Xaria",
+			"score": 0,
+			"img": "/img/xaria_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 2,
+			"name": "Alex",
+			"score": 0,
+			"img": "/img/alex_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 3,
+			"name": "Clara",
+			"score": 0,
+			"img": "/img/clara_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 4,
+			"name": "Daniel",
+			"score": 0,
+			"img": "/img/daniel_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 5,
+			"name": "Emma",
+			"score": 0,
+			"img": "/img/emma_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 6,
+			"name": "Kolin",
+			"score": 0,
+			"img": "/img/kolin_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 7,
+			"name": "Lauren",
+			"score": 0,
+			"img": "/img/lauren_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 8,
+			"name": "Matt",
+			"score": 0,
+			"img": "/img/matt_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 9,
+			"name": "Meghan",
+			"score": 0,
+			"img": "/img/megan_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 10,
+			"name": "Annina",
+			"score": 0,
+			"img": "/img/nina_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 11,
+			"name": "Rachel",
+			"score": 0,
+			"img": "/img/rachel_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 12,
+			"name": "Sarah",
+			"score": 0,
+			"img": "/img/sarah_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 13,
+			"name": "Mitchell",
+			"score": 0,
+			"img": "/img/mitchell_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 14,
+			"name": "Emery",
+			"score": 0,
+			"img": "/img/emery_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 15,
+			"name": "Ronald",
+			"score": 0,
+			"img": "/img/ronald_framed.png",
+			"hidden": false
+		},
+		{
+			"id": 16,
+			"name": "Wes",
+			"score": 0,
+			"img": "/img/wes_framed.png",
+			"hidden": false
+		}
+	],
+	"msgs": []
+}

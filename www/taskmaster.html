@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body * {
+        font-size: 30px;
+
+      }
+      .hidden {
+        color: grey;
+      }
+      button {
+        height: 4em;
+      }
+      label {
+        width: 200px;
+        display: inline-block;
+      }
+
+
+    </style>
+    <script type="text/javascript">
+      function $(query) {
+        return document.querySelector(query);
+      }
+
+      async function hidePlayer(id) {
+        let data = new FormData();
+        data.append("player", id);
+        await fetch("/api/hideplayer", {
+          method: "POST",
+          body: new URLSearchParams(data),
+        });
+        location.reload();
+      }
+      async function showPlayer(id) {
+        let data = new FormData();
+        data.append("player", id);
+        await fetch("/api/showplayer", {
+          method: "POST",
+          body: new URLSearchParams(data),
+        });
+        location.reload();
+      }
+      function renderForm(game) {
+        const form = document.createElement("form");
+        form.method = "post";
+        form.action = "/api/score";
+
+        for (const player of game.players) {
+          const id = `player_${player.id}`;
+
+          const label = document.createElement("label");
+          label.for = id;
+          label.innerText = player.name;
+          if (player.hidden) label.classList.add("hidden");
+
+          const input = document.createElement("input");
+          input.type = "text";
+          input.id = id;
+          input.name = id;
+          input.value = 0;
+          input.style.width = "10%";
+
+          const decrementBtn = document.createElement("button");
+          decrementBtn.type = "button";
+          decrementBtn.onclick = () => {
+            input.value--;
+          };
+          decrementBtn.innerText = "-";
+          decrementBtn.style.width = "10%";
+
+          const incrementBtn = document.createElement("button");
+          incrementBtn.type = "button";
+          incrementBtn.onclick = () => {
+            input.value++;
+          };
+          incrementBtn.innerText = "+";
+          incrementBtn.style.width = "10%";
+
+          const hideBtn = document.createElement("button");
+          hideBtn.type = "button";
+          hideBtn.onclick = () => hidePlayer(player.id);
+          hideBtn.innerText = "hide";
+
+          const showBtn = document.createElement("button");
+          showBtn.type = "button";
+          showBtn.onclick = () => showPlayer(player.id);
+          showBtn.innerText = "show";
+
+          form.appendChild(label);
+          form.appendChild(input);
+          form.appendChild(decrementBtn);
+          form.appendChild(incrementBtn);
+          form.appendChild(hideBtn);
+          form.appendChild(showBtn);
+          form.appendChild(document.createElement("br"));
+        }
+        const submit = document.createElement("button");
+        submit.innerText = "submit";
+        form.appendChild(submit);
+        return form;
+      }
+
+      window.onload = async function () {
+        const response = await fetch("/api/getgame");
+        const game = await response.json();
+        const form = renderForm(game);
+        document.body.appendChild(form);
+      };
+
+      async function sendMsg(msg) {
+        await fetch("/api/sendmsg", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(msg),
+        });
+      }
+
+      function getTimerSec() {
+        return document.querySelector("#timersec").value;
+      }
+
+      async function addPlayer(name) {
+        let data = new FormData();
+        data.append("name", name);
+        await fetch("/api/addplayer", {
+          method: "POST",
+          body: new URLSearchParams(data),
+        });
+        location.reload();
+      }
+    </script>
+  </head>
+  <body>
+    <a href="/disttask.html">enter onces</a><br />
+    <label for="timersec">Timer seconds</label>
+    <input type="number" id="timersec" value="100" />
+    <button onclick="sendMsg({name: 'starttimer', durationSec: getTimerSec()})">
+      start timer
+    </button>
+    <br />
+    <button onclick="sendMsg({name: 'showleaderboard'})">
+      show leaderboard
+    </button>
+    <button onclick="sendMsg({name: 'showboxplot'})">
+      show boxplot
+    </button>
+    <button onclick="sendMsg({name: 'showmcat'})">
+      show MCAT question
+    </button>
+    <br />
+    <input type="text" id="playername" />
+    <button onclick="addPlayer($('#playername').value)">add player</button>
+  </body>
+</html>
